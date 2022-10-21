@@ -1,44 +1,38 @@
 import networkx as nx
+import numpy as np
 
 # Trabalho 1
 
 g = nx.Graph()
 
-def printgraph():
+def printg():
     print(g.nodes())
     print(g.edges())
 
-def addNode(node):
-    g.add_node(node)
+def addNode(graph, node):
+    graph.add_node(node)
 
-def addEdge(node1, node2):
-    g.add_edge(node1, node2)
-    
-def nodeExist(node):
-    for node in g.nodes():
-        if node == node:
-            return True
+def addEdge(graph, node1, node2):
+    graph.add_edge(node1, node2)
+
+def countNodes(graph):
+    return len(graph.nodes())
+
+def countEdges(graph):
+    return len(graph.edges())
+
+def setAllNodesNotVisited(graph):
+    for node in graph.nodes():
+        graph.nodes[node]['visited'] = False
+
+def setAllEdgesNotVisited(graph):
+    for edge in graph.edges():
+        graph.edges[edge]['visited'] = False
+
+def checkIfNodeIsVisited(graph, node):
+    if graph.nodes[node]['visited'] == True:
+        return True
     return False
-
-def edgeExist(node1, node2):
-    for edge in g.edges():
-        if edge[0] == node1 and edge[1] == node2:
-            return True
-    return False
-
-# find eges of a node
-def findEdges(node):
-    for edge in g.edges():
-        if edge[0] == node:
-            print(edge[1])
-        if edge[1] == node:
-            print(edge[0])
-
-def countNodes():
-    return len(g.nodes())
-
-def countEdges():
-    return len(g.edges())
 
 def moveItem(cfgAtual, item): # funcao para achar os vizinhos
 
@@ -65,7 +59,6 @@ def moveItem(cfgAtual, item): # funcao para achar os vizinhos
 
     return listaCfgs
 
-# create all possible arrays from a given array
 def permutate(arr):
     if len(arr) == 0:
         return []
@@ -79,46 +72,103 @@ def permutate(arr):
             l.append([m] + p)
     return l
 
-
-# def printmatrix3x3(m):
-#     for matrix in m:
-#         print(matrix[0], matrix[1], matrix[2])
-#         print(matrix[3], matrix[4], matrix[5])
-#         print(matrix[6], matrix[7], matrix[8])
-#         print('-------------')
-
-# def printmatrix(matrix):
-#     print(matrix[0], matrix[1], matrix[2])
-#     print(matrix[3], matrix[4], matrix[5])
-#     print(matrix[6], matrix[7], matrix[8])
-#     print('-------------')
-
 def makeListString(lista):
     string = ""
     for i in lista:
         string += str(i)
     return string
 
-def criaGrafo(config):
+def createGraph(config):
     p = permutate(config)
-    
     for cfgAtual in p:
-        
         cfgAtualList = makeListString(cfgAtual)
-        addNode(makeListString(cfgAtualList))
-
+        addNode(g, makeListString(cfgAtualList))
         newCfgList = moveItem(cfgAtual, 0)
-
         for cfg in newCfgList:
             cfgString = makeListString(cfg)
+            addNode(g, cfgString)
+            addEdge(g, cfgAtualList, cfgString)
+            addEdge(g, cfgString, cfgAtualList)
+    print("Nodes: ", countNodes(g))
+    print("Edges: ", countEdges(g))
 
-            addNode(cfgString)
-            addEdge(cfgAtualList, cfgString)
-            addEdge(cfgString, cfgAtualList)
-            
-        
-    print("Nodes: ", countNodes())
-    print("Edges: ", countEdges())
+createGraph([0,1,2,3,4,5,6,7,8])
+
+# vertices 362880 = 9! 
+# arestas 483840 = 8! * 12
+# exemplo conectado [0,1,2,3,4,5,6,7,8] - [3,1,2,0,4,5,6,7,8]
+# exemplo nao conectado [0,1,2,3,4,5,6,7,8] - [1,2,3,4,5,6,7,8,0]
+
+# Trabalho 2
+
+def getVisitedNodes(graph):
+    visitedNodes = []
+    for node in graph.nodes():
+        if graph.nodes[node]['visited'] == True:
+            visitedNodes.append(node)
+    return visitedNodes
+
+def getConnectedNodes(graph, node):
+    connectedNodes = []
+    for edge in graph.edges():
+        if edge[0] == node:
+            connectedNodes.append(edge[1])
+        if edge[1] == node:
+            connectedNodes.append(edge[0])
+    return connectedNodes
+
+def removeCommonElements(list1, list2):
+    for i in list2:
+        if i in list1:
+            list2.remove(i)
+    return list2
+
+def bfs(graph, start):
+    visited, queue = [], [start]
+    while queue:
+        vertex = queue.pop(0)
+        if vertex not in visited:
+            visited.append(vertex)
+            queue.extend(removeCommonElements(visited, list(graph[vertex])))
+            graph.nodes[vertex]['visited'] = True
+    return visited
+
+def connectedComponents(graph):
+    setAllNodesNotVisited(graph)
+    components = 0
+    for node in graph:
+        if checkIfNodeIsVisited(graph, node) == False:
+            bfs(graph, node)
+            components += 1
+
+    return components
+
+# teste com grafo menor
+# j = nx.Graph()
+# j.add_node(1)
+# j.add_node(2)
+# j.add_node(3)
+# j.add_node(4)
+# j.add_edge(1,2)
+# print(connectedComponents(j))
 
 
-criaGrafo([0,1,2,3,4,5,6,7,8])
+# RESULTADO ABAIXO
+# print(connectedComponents(g, '012345678'))
+# foram achados 2 componentes conexo
+
+# Trabalho 3
+
+# PRECISA SER TESTADO AINDA
+
+# def bfsLongestPath(graph, start, end):
+#     visited, queue = [], [start]
+#     while queue:
+#         vertex = queue.pop(0)
+#         if vertex not in visited:
+#             visited.append(vertex)
+#             queue.extend(removeCommonElements(visited, list(graph[vertex])))
+#             graph.nodes[vertex]['visited'] = True
+#     return len(visited)
+
+# print(bfsLongestPath(g, '012345678', '123456780'))
