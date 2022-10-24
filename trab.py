@@ -22,19 +22,6 @@ def countNodes(graph):
 def countEdges(graph):
     return len(graph.edges())
 
-def setAllNodesNotVisited(graph):
-    for node in graph.nodes():
-        graph.nodes[node]['visited'] = False
-
-def setAllEdgesNotVisited(graph):
-    for edge in graph.edges():
-        graph.edges[edge]['visited'] = False
-
-def checkIfNodeIsVisited(graph, node):
-    if graph.nodes[node]['visited'] == True:
-        return True
-    return False
-
 def moveItem(cfgAtual, item): # funcao para achar os vizinhos
 
     cfgNova = cfgAtual.copy()
@@ -160,7 +147,9 @@ print('quantidade de componentes conexos do Grafo: ', connectedComponents(g))
 
 # Trabalho 3
 
+
 # PRECISA SER TESTADO AINDA
+
 
 # def bfsLongestPath(graph, start, end):
 #     visited, queue = [], [start]
