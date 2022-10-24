@@ -1,5 +1,6 @@
 import networkx as nx
 import numpy as np
+import time
 
 # Trabalho 1
 
@@ -79,6 +80,7 @@ def makeListString(lista):
     return string
 
 def createGraph(config):
+    start_time = time.time()
     p = permutate(config)
     for cfgAtual in p:
         cfgAtualList = makeListString(cfgAtual)
@@ -91,6 +93,7 @@ def createGraph(config):
             addEdge(g, cfgString, cfgAtualList)
     print("Nodes: ", countNodes(g))
     print("Edges: ", countEdges(g))
+    print("--- create graph function time: %s seconds ---" % (time.time() - start_time))
 
 createGraph([0,1,2,3,4,5,6,7,8])
 
@@ -101,45 +104,38 @@ createGraph([0,1,2,3,4,5,6,7,8])
 
 # Trabalho 2
 
-def getVisitedNodes(graph):
-    visitedNodes = []
-    for node in graph.nodes():
-        if graph.nodes[node]['visited'] == True:
-            visitedNodes.append(node)
-    return visitedNodes
+# Fazendo com Hash
 
-def getConnectedNodes(graph, node):
-    connectedNodes = []
-    for edge in graph.edges():
-        if edge[0] == node:
-            connectedNodes.append(edge[1])
-        if edge[1] == node:
-            connectedNodes.append(edge[0])
-    return connectedNodes
+def removeCommonElements(dict1, list1):
+    for i in list1:
+        if dict1[i]:
+            list1.remove(i)
+    return list1
 
-def removeCommonElements(list1, list2):
-    for i in list2:
-        if i in list1:
-            list2.remove(i)
-    return list2
-
-def bfs(graph, start):
-    visited, queue = [], [start]
+def bfs(graph, start, visited):
+    queue =  [start]
     while queue:
-        vertex = queue.pop(0)
-        if vertex not in visited:
-            visited.append(vertex)
-            queue.extend(removeCommonElements(visited, list(graph[vertex])))
-            graph.nodes[vertex]['visited'] = True
+        vertex = queue.pop(0)	
+        if visited[vertex] == False:
+            visited[vertex] = True
+            queue.extend(removeCommonElements(visited, list(graph[vertex]))) # graph[vertex] da os vizinhos de vertex
     return visited
 
+def setAllNodesNotVisited(graph):
+    notVisited = {} 
+    for node in graph:
+        notVisited[node] = False
+    return notVisited
+
 def connectedComponents(graph):
-    setAllNodesNotVisited(graph)
+    start_time = time.time()
+    visited = setAllNodesNotVisited(graph)
     components = 0
     for node in graph:
-        if checkIfNodeIsVisited(graph, node) == False:
-            bfs(graph, node)
+        if visited[node] == False:	
+            bfs(graph, node, visited)
             components += 1
+    print("--- find conencted components function time: %s seconds ---" % (time.time() - start_time))
 
     return components
 
@@ -150,7 +146,12 @@ def connectedComponents(graph):
 # j.add_node(3)
 # j.add_node(4)
 # j.add_edge(1,2)
+# j.add_edge(2,1)
+# j.add_edge(3,1)
+# j.add_edge(1,3)
 # print(connectedComponents(j))
+
+print('quantidade de componentes conexos do Grafo: ', connectedComponents(g))
 
 
 # RESULTADO ABAIXO
