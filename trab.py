@@ -126,18 +126,6 @@ def connectedComponents(graph):
 
     return components
 
-# teste com grafo menor
-# j = nx.Graph()
-# j.add_node(1)
-# j.add_node(2)
-# j.add_node(3)
-# j.add_node(4)
-# j.add_edge(1,2)
-# j.add_edge(2,1)
-# j.add_edge(3,1)
-# j.add_edge(1,3)
-# print(connectedComponents(j))
-
 print('quantidade de componentes conexos do Grafo: ', connectedComponents(g))
 
 
@@ -146,28 +134,44 @@ print('quantidade de componentes conexos do Grafo: ', connectedComponents(g))
 # foram achados 2 componentes conexo
 
 # Trabalho 3
-
-
 # PRECISA SER TESTADO AINDA
 
-def removeCommonElementsLists(list1, list2):
-    for i in list1:
-        if i in list2:
-            list1.remove(i)
-    return list1
-
-def bfsFurthest(graph, start, visited):
-    queue =  [(start, [start])]
+# find furthest node from start
+def furthestNode(graph, start, visited):
+    queue =  [start]
     while queue:
-        (vertex, path) = queue.pop(0)	
+        vertex = queue.pop(0)
         if visited[vertex] == False:
             visited[vertex] = True
-            print(path)
-            print(list(graph[vertex]))
-            listAux = removeCommonElementsLists(list(graph[vertex]), path)
-            for next in listAux:
-                queue.append((next, path + [next]))
+            queue.extend(removeCommonElements(visited, list(graph[vertex]))) # graph[vertex] da os vizinhos de vertex
+            j += 1
+            
     return vertex
 
-print('furthest node from 012345678: ', bfsFurthest(g, '123456780', setAllNodesNotVisited(g)))
+# def nodeDistance(graph, start, visited):
+#     queue =  [start]
+#     lvls = [[start]]
+#     level = 0
+#     neighboors = []
+#     while queue:
+#         lvls.append([])
+#         for vertex in lvls[level]:
+#             vertex.
+#         vertex = queue.pop(0)
+#         if visited[vertex] == False:
+#             visited[vertex] = True
+#             queue.extend(removeCommonElements(visited, list(graph[vertex]))) # graph[vertex] da os vizinhos de vertex
+#             lvls[level].append(vertex)
+            
+#         level += 1
+#     return lvls
 
+# acha todos os vizinhos
+# poe os vizinhos no proximo level (se ainda nao passou por eles)
+# pula o level 
+# acha todos os vizinhos desse level e coloca no proximo
+# faz ate todos os nos serem visitados
+
+
+# print('furthest node from 012345678: ', furthestNode(g, '123456780', setAllNodesNotVisited(g)))
+# print(len(nodeDistance(g, '123456780', setAllNodesNotVisited(g))))	
