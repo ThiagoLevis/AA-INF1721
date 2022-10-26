@@ -1,4 +1,5 @@
 # AA - INF1721
+Pedro Feres Manhães - 1810862
 
 Quantos nós e arestas existem no grafo do espaço de estados que você construiu
     vertices:
