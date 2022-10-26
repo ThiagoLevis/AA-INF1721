@@ -150,15 +150,24 @@ print('quantidade de componentes conexos do Grafo: ', connectedComponents(g))
 
 # PRECISA SER TESTADO AINDA
 
+def removeCommonElementsLists(list1, list2):
+    for i in list1:
+        if i in list2:
+            list1.remove(i)
+    return list1
 
-# def bfsLongestPath(graph, start, end):
-#     visited, queue = [], [start]
-#     while queue:
-#         vertex = queue.pop(0)
-#         if vertex not in visited:
-#             visited.append(vertex)
-#             queue.extend(removeCommonElements(visited, list(graph[vertex])))
-#             graph.nodes[vertex]['visited'] = True
-#     return len(visited)
+def bfsFurthest(graph, start, visited):
+    queue =  [(start, [start])]
+    while queue:
+        (vertex, path) = queue.pop(0)	
+        if visited[vertex] == False:
+            visited[vertex] = True
+            print(path)
+            print(list(graph[vertex]))
+            listAux = removeCommonElementsLists(list(graph[vertex]), path)
+            for next in listAux:
+                queue.append((next, path + [next]))
+    return vertex
 
-# print(bfsLongestPath(g, '012345678', '123456780'))
+print('furthest node from 012345678: ', bfsFurthest(g, '123456780', setAllNodesNotVisited(g)))
+
